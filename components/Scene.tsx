@@ -103,7 +103,7 @@ export default function Scene() {
 
           <Rig />
 
-          <EffectComposer disableNormalPass>
+          <EffectComposer>
             <Bloom
               mipmapBlur
               luminanceThreshold={0.15}
