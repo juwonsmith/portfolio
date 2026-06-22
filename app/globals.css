@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --scroll-progress: 0;
+  --scroll-skew: 0deg;
+}
+
+@layer base {
+  html {
+    scroll-behavior: auto; /* Lenis handles smooth scrolling */
+  }
+
+  body {
+    @apply bg-ink text-white antialiased;
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    @apply bg-accent text-ink;
+  }
+
+  /* hide native cursor only when the custom one is active (fine pointers) */
+  @media (pointer: fine) {
+    body.custom-cursor,
+    body.custom-cursor * {
+      cursor: none;
+    }
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, #fff, var(--accent, #7aa2ff));
+  }
+}
+
+/* slim, dark scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #05060c;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1d2e;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2f45;
+}
