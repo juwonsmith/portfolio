@@ -55,6 +55,8 @@ uniform float uTime;
 uniform float uScroll;
 uniform float uDistort;
 uniform vec2  uMouse;
+uniform float uEnergy;
+uniform float uClick;
 
 varying float vDistort;
 varying vec3  vNormal;
@@ -66,11 +68,11 @@ void main() {
   float t = uTime * 0.35;
   vec3 pos = position;
 
-  float freq = 1.05 + uScroll * 0.9;
+  float freq = 1.05 + uScroll * 0.9 + uEnergy * 0.8;
   float n  = snoise(pos * freq + vec3(t, t * 0.7, t * 0.4 + uMouse.x));
   n += 0.45 * snoise(pos * freq * 2.1 + vec3(-t * 0.6, t, uMouse.y));
 
-  float amp = uDistort * (0.34 + uScroll * 0.55);
+  float amp = uDistort * (0.34 + uScroll * 0.55 + uEnergy * 0.5 + uClick * 0.7);
   vec3 displaced = pos + normal * (n * amp);
 
   vDistort = n;

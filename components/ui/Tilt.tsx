@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { gsap } from "gsap";
+import { scrollState } from "@/lib/scrollStore";
 
 type Props = {
   children: React.ReactNode;
@@ -10,10 +11,12 @@ type Props = {
   max?: number;
 };
 
-export default function Tilt({ children, className = "", max = 8 }: Props) {
+export default function Tilt({ children, className = "", max = 6 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const glare = useRef<HTMLDivElement>(null);
 
   const onMove = (e: React.MouseEvent) => {
+    if (scrollState.reducedMotion) return;
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -26,6 +29,11 @@ export default function Tilt({ children, className = "", max = 8 }: Props) {
       ease: "power2.out",
       transformPerspective: 900,
     });
+    if (glare.current) {
+      glare.current.style.setProperty("--gx", `${(px + 0.5) * 100}%`);
+      glare.current.style.setProperty("--gy", `${(py + 0.5) * 100}%`);
+      gsap.to(glare.current, { opacity: 1, duration: 0.3 });
+    }
   };
 
   const onLeave = () => {
@@ -35,6 +43,7 @@ export default function Tilt({ children, className = "", max = 8 }: Props) {
       duration: 0.7,
       ease: "elastic.out(1, 0.5)",
     });
+    if (glare.current) gsap.to(glare.current, { opacity: 0, duration: 0.4 });
   };
 
   return (
@@ -42,10 +51,19 @@ export default function Tilt({ children, className = "", max = 8 }: Props) {
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={className}
+      className={`relative ${className}`}
       style={{ transformStyle: "preserve-3d" }}
     >
       {children}
+      <div
+        ref={glare}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 mix-blend-screen"
+        style={{
+          background:
+            "radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.22), transparent 45%)",
+        }}
+      />
     </div>
   );
 }

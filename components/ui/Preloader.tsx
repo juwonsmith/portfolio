@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { scrollState } from "@/lib/scrollStore";
 
 export default function Preloader() {
   const root = useRef<HTMLDivElement>(null);
@@ -9,6 +10,13 @@ export default function Preloader() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    // reduced motion: skip the whole intro, reveal content immediately
+    if (scrollState.reducedMotion) {
+      gsap.set("[data-hero-reveal]", { opacity: 1, yPercent: 0, clearProps: "transform" });
+      setDone(true);
+      return;
+    }
+
     const obj = { v: 0 };
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();

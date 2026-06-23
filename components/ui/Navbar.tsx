@@ -42,7 +42,7 @@ export default function Navbar() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="transition-colors hover:text-white"
+                className="link-underline transition-colors hover:text-white"
                 data-cursor
               >
                 {l.label}
@@ -60,7 +60,8 @@ export default function Navbar() {
                 target="_blank"
                 rel="noreferrer"
                 data-cursor
-                className="transition-colors hover:text-white"
+                data-cursor-label="Open ↗"
+                className="link-underline transition-colors hover:text-white"
               >
                 {s.label}
               </a>
@@ -70,7 +71,8 @@ export default function Navbar() {
           <a
             href="#contact"
             data-cursor
-            className="rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-transform hover:scale-105"
+            data-cursor-label="Say hi"
+            className="rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-transform hover:scale-105 active:scale-95"
           >
             Let&apos;s talk
           </a>

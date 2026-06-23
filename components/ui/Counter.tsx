@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scrollState } from "@/lib/scrollStore";
 
 type Props = {
   to: number;
@@ -18,6 +19,11 @@ export default function Counter({ to, suffix = "", className }: Props) {
     const el = ref.current;
     if (!el) return;
     gsap.registerPlugin(ScrollTrigger);
+
+    if (scrollState.reducedMotion) {
+      setValue(to);
+      return;
+    }
 
     const obj = { v: 0 };
     const ctx = gsap.context(() => {

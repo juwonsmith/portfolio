@@ -27,7 +27,7 @@ export default function Hero() {
         <h1 className="font-display text-[16vw] font-bold leading-[0.9] tracking-tightest md:text-[9vw]">
           <span className="block overflow-hidden">
             <span data-hero-reveal className="block">
-              <Scramble text={firstName} delay={2000} revealSpeed={0.05} />
+              <Scramble text={firstName} delay={2000} revealSpeed={0.05} hoverReplay />
             </span>
           </span>
           {lastName && (

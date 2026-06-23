@@ -3,14 +3,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scrollState } from "@/lib/scrollStore";
 
 type Props = {
   children: React.ReactNode;
   className?: string;
-  /** vertical offset to animate from */
   y?: number;
   delay?: number;
-  /** stagger direct children instead of the wrapper itself */
   stagger?: boolean;
 };
 
@@ -26,22 +25,25 @@ export default function Reveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
     gsap.registerPlugin(ScrollTrigger);
+    const targets = stagger ? Array.from(el.children) : el;
 
+    // reduced motion: show everything instantly, no scroll animation
+    if (scrollState.reducedMotion) {
+      gsap.set(targets, { opacity: 1, y: 0, clearProps: "transform" });
+      return;
+    }
+
+    const coarse = scrollState.coarsePointer;
     const ctx = gsap.context(() => {
-      const targets = stagger ? Array.from(el.children) : el;
       gsap.from(targets, {
-        y,
+        y: coarse ? 24 : y, // less travel on tall phone viewports
         opacity: 0,
         duration: 1,
         delay,
         ease: "power3.out",
-        stagger: stagger ? 0.12 : 0,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-        },
+        stagger: stagger ? (coarse ? 0.06 : 0.12) : 0,
+        scrollTrigger: { trigger: el, start: coarse ? "top 90%" : "top 85%" },
       });
     }, el);
 

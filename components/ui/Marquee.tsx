@@ -10,7 +10,7 @@ export default function Marquee() {
   return (
     <div
       className="relative overflow-hidden border-y border-white/10 py-6"
-      style={{ transform: "skewY(calc(var(--scroll-skew, 0deg) * 0.15))" }}
+      style={{ transform: "skewY(calc(var(--scroll-skew, 0deg) * 0.22))" }}
     >
       <div className="flex w-max animate-marquee gap-10 whitespace-nowrap">
         {items.map((w, i) => (

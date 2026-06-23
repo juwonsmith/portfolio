@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "@/lib/site";
 import Tilt from "@/components/ui/Tilt";
 import SplitReveal from "@/components/ui/SplitReveal";
+import { tap } from "@/lib/haptics";
 
 export default function Projects() {
   const section = useRef<HTMLDivElement>(null);
@@ -56,7 +57,7 @@ export default function Projects() {
                 trigger: card,
                 start: "top 95%",
                 end: "top 45%",
-                scrub: true,
+                scrub: 0.6,
               },
             }
           );
@@ -66,9 +67,9 @@ export default function Projects() {
           if (art) {
             gsap.fromTo(
               art,
-              { yPercent: -10 },
+              { yPercent: -6 },
               {
-                yPercent: 10,
+                yPercent: 6,
                 ease: "none",
                 scrollTrigger: {
                   trigger: card,
@@ -194,7 +195,8 @@ export default function Projects() {
                       href={l.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="group/link inline-flex items-center gap-2 text-sm font-medium text-white"
+                      onTouchStart={() => tap()}
+                      className="link-underline group/link inline-flex items-center gap-2 text-sm font-medium text-white"
                     >
                       {l.label}
                       <span className="transition-transform group-hover/link:translate-x-1">

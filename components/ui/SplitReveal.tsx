@@ -3,16 +3,14 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scrollState } from "@/lib/scrollStore";
 
 type Props = {
   text: string;
   className?: string;
-  /** delay before the stagger starts */
   delay?: number;
 };
 
-// Splits text into words (each clipped) and reveals them with a staggered
-// upward slide when scrolled into view. No paid GSAP plugin needed.
 export default function SplitReveal({ text, className, delay = 0 }: Props) {
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -20,15 +18,22 @@ export default function SplitReveal({ text, className, delay = 0 }: Props) {
     const el = ref.current;
     if (!el) return;
     gsap.registerPlugin(ScrollTrigger);
+    const inners = el.querySelectorAll(".word-inner");
 
+    if (scrollState.reducedMotion) {
+      gsap.set(inners, { yPercent: 0 });
+      return;
+    }
+
+    const coarse = scrollState.coarsePointer;
     const ctx = gsap.context(() => {
-      gsap.from(el.querySelectorAll(".word-inner"), {
+      gsap.from(inners, {
         yPercent: 110,
         duration: 1,
         delay,
         ease: "power4.out",
-        stagger: 0.06,
-        scrollTrigger: { trigger: el, start: "top 85%" },
+        stagger: coarse ? 0.03 : 0.06,
+        scrollTrigger: { trigger: el, start: coarse ? "top 90%" : "top 85%" },
       });
     }, el);
 
@@ -44,7 +49,7 @@ export default function SplitReveal({ text, className, delay = 0 }: Props) {
           className="inline-block overflow-hidden align-bottom"
         >
           <span className="word-inner inline-block">{word}</span>
-          {i < text.split(" ").length - 1 ? " " : ""}
+          {i < text.split(" ").length - 1 ? " " : ""}
         </span>
       ))}
     </span>

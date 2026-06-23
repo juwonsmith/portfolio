@@ -20,6 +20,8 @@ export default function Contact() {
 
         <a
           href={`mailto:${site.email}`}
+          data-cursor
+          data-cursor-label="Email"
           className="inline-block font-display text-[12vw] font-bold leading-none tracking-tightest transition-colors hover:text-accent md:text-[8vw]"
         >
           <SplitReveal text="Let's talk" />
@@ -41,8 +43,9 @@ export default function Contact() {
               href={s.href}
               target="_blank"
               rel="noreferrer"
-              className="transition-colors hover:text-white"
+              className="link-underline transition-colors hover:text-white"
               data-cursor
+              data-cursor-label="Open ↗"
             >
               {s.label}
             </a>

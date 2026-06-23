@@ -5,14 +5,15 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { scrollState } from "@/lib/scrollStore";
 
-const COUNT = 1800;
-
 export default function Particles() {
   const points = useRef<THREE.Points>(null!);
 
+  // fewer particles on touch / low-power devices
+  const count = useMemo(() => (scrollState.coarsePointer ? 900 : 1800), []);
+
   const positions = useMemo(() => {
-    const arr = new Float32Array(COUNT * 3);
-    for (let i = 0; i < COUNT; i++) {
+    const arr = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
       const r = 3 + Math.random() * 7;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
@@ -21,13 +22,21 @@ export default function Particles() {
       arr[i * 3 + 2] = r * Math.cos(phi);
     }
     return arr;
-  }, []);
+  }, [count]);
 
   useFrame((_, delta) => {
-    if (!points.current) return;
-    points.current.rotation.y += delta * 0.02;
-    points.current.rotation.x = scrollState.progress * 0.5;
-    points.current.position.z = scrollState.progress * 2.5;
+    const pts = points.current;
+    if (!pts) return;
+    pts.rotation.x = scrollState.progress * 0.5;
+    if (scrollState.reducedMotion) return;
+    pts.rotation.y += delta * 0.02;
+    pts.position.z = scrollState.progress * 2.5;
+    // scroll momentum + energy gently scatters the field, then settles
+    const boost = Math.min(
+      Math.abs(scrollState.velocity) * 0.02 + scrollState.energy * 0.08,
+      0.18
+    );
+    pts.scale.setScalar(1 + boost);
   });
 
   return (
