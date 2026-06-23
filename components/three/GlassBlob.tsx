@@ -12,8 +12,12 @@ const DETAIL = 14;
 
 export default function GlassBlob() {
   const mesh = useRef<THREE.Mesh>(null!);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mat = useRef<any>(null);
   const noise = useMemo(() => new SimplexNoise(), []);
   const frozen = useRef(false);
+  const coolAtten = useMemo(() => new THREE.Color("#a9bdff"), []);
+  const warmAtten = useMemo(() => new THREE.Color("#ffb3d6"), []);
 
   const { geometry, dirs } = useMemo(() => {
     const geo = new THREE.IcosahedronGeometry(RADIUS, DETAIL);
@@ -54,7 +58,7 @@ export default function GlassBlob() {
     const vel = Math.abs(scrollState.velocity);
     const freq = 1.15 + p * 0.6 + energy * 0.9;
     const amp =
-      0.18 + p * 0.12 + energy * 0.22 + Math.min(vel * 0.06, 0.2) + scrollState.click * 0.18;
+      0.18 + p * 0.12 + energy * 0.35 + Math.min(vel * 0.06, 0.2) + scrollState.click * 0.28;
 
     for (let i = 0; i < dirs.length; i++) {
       const d = dirs[i];
@@ -65,17 +69,22 @@ export default function GlassBlob() {
     pos.needsUpdate = true;
     geometry.computeVertexNormals();
 
+    // scroll-coupled mood: the glass tint warms as you travel down the page
+    if (mat.current?.attenuationColor) {
+      mat.current.attenuationColor.lerpColors(coolAtten, warmAtten, p);
+    }
+
     if (mesh.current) {
       mesh.current.rotation.y += delta * 0.12;
       mesh.current.rotation.x = THREE.MathUtils.lerp(
         mesh.current.rotation.x,
-        scrollState.pointer.y * 0.4 + p * 1.0,
-        0.06
+        scrollState.pointer.y * 0.6 + p * 1.0,
+        0.09
       );
       mesh.current.rotation.z = THREE.MathUtils.lerp(
         mesh.current.rotation.z,
-        scrollState.pointer.x * 0.5,
-        0.09
+        scrollState.pointer.x * 0.7,
+        0.12
       );
       mesh.current.position.x = THREE.MathUtils.lerp(
         mesh.current.position.x,
@@ -90,6 +99,7 @@ export default function GlassBlob() {
   return (
     <mesh ref={mesh} geometry={geometry}>
       <MeshTransmissionMaterial
+        ref={mat}
         samples={4}
         resolution={256}
         transmission={1}
