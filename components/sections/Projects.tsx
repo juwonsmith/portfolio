@@ -37,25 +37,55 @@ export default function Projects() {
       return () => tween.kill();
     });
 
-    // Mobile: no hover + no horizontal scroll, so make the vertical scroll feel
-    // alive — stagger each card in and fade its live preview in as it arrives.
+    // Mobile: no hover + no horizontal scroll. Make the vertical scroll feel
+    // tactile by SCRUB-linking everything to finger position — cards scale/fade
+    // in proportionally and the artwork parallaxes as the card travels past.
     mm.add("(max-width: 767px)", () => {
       const ctx = gsap.context(() => {
         gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
-          gsap.from(card.querySelectorAll(".reveal-item"), {
-            y: 60,
-            opacity: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            stagger: 0.12,
-            scrollTrigger: { trigger: card, start: "top 82%" },
-          });
+          // scrub-linked entrance: scales + fades up in lockstep with scroll
+          gsap.fromTo(
+            card,
+            { autoAlpha: 0.3, scale: 0.9, y: 50 },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              y: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 95%",
+                end: "top 45%",
+                scrub: true,
+              },
+            }
+          );
+
+          // depth parallax — artwork drifts opposite the scroll
+          const art = card.querySelector<HTMLElement>(".art-parallax");
+          if (art) {
+            gsap.fromTo(
+              art,
+              { yPercent: -10 },
+              {
+                yPercent: 10,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                },
+              }
+            );
+          }
+
+          // reveal the live preview as the card reaches mid-screen
           const img = card.querySelector<HTMLElement>(".preview-img");
           if (img) {
-            // toggle opacity via the class's CSS transition (smooth, no conflict)
             ScrollTrigger.create({
               trigger: card,
-              start: "top 62%",
+              start: "top 60%",
               onEnter: () => (img.style.opacity = "1"),
               onLeaveBack: () => (img.style.opacity = "0"),
             });
@@ -104,27 +134,29 @@ export default function Projects() {
                   data-view
                   className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10"
                 >
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage: `linear-gradient(135deg, ${p.gradient[0]}, ${p.gradient[1]})`,
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.28),transparent_55%)]" />
-                  {preview && (
-                    <img
-                      src={`https://api.microlink.io/?url=${encodeURIComponent(
-                        preview
-                      )}&screenshot=true&embed=screenshot.url&viewport.width=1280&viewport.height=900`}
-                      alt={`${p.title} preview`}
-                      loading="lazy"
-                      onError={(e) => {
-                        // if the screenshot can't be captured, keep the gradient
-                        e.currentTarget.style.display = "none";
+                  <div className="art-parallax absolute inset-[-12%]">
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: `linear-gradient(135deg, ${p.gradient[0]}, ${p.gradient[1]})`,
                       }}
-                      className="preview-img absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-700 group-hover:opacity-100"
                     />
-                  )}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.28),transparent_55%)]" />
+                    {preview && (
+                      <img
+                        src={`https://api.microlink.io/?url=${encodeURIComponent(
+                          preview
+                        )}&screenshot=true&embed=screenshot.url&viewport.width=1280&viewport.height=900`}
+                        alt={`${p.title} preview`}
+                        loading="lazy"
+                        onError={(e) => {
+                          // if the screenshot can't be captured, keep the gradient
+                          e.currentTarget.style.display = "none";
+                        }}
+                        className="preview-img absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                      />
+                    )}
+                  </div>
                   <div className="pointer-events-none absolute inset-0 flex items-end p-6">
                     <span className="font-display text-7xl font-bold text-white/20 md:text-8xl">
                       {String(i + 1).padStart(2, "0")}
