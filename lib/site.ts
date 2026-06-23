@@ -3,9 +3,9 @@
 // ─────────────────────────────────────────────────────────────
 
 export const site = {
-  name: "Oladele Juwon",
+  name: "Kami",
   // short handle used in the logo / footer
-  initials: "OJ",
+  initials: "K",
   role: "Full-Stack Developer",
   // one punchy line shown under the hero name
   tagline: "I design and build fast, polished products for the web.",

@@ -5,6 +5,9 @@ import MagneticButton from "@/components/ui/MagneticButton";
 import Scramble from "@/components/ui/Scramble";
 
 export default function Hero() {
+  const [firstName, ...restName] = site.name.split(" ");
+  const lastName = restName.join(" ");
+
   return (
     <section
       id="top"
@@ -21,17 +24,19 @@ export default function Hero() {
           </p>
         </div>
 
-        <h1 className="font-display text-[14vw] font-bold leading-[0.9] tracking-tightest md:text-[9vw]">
+        <h1 className="font-display text-[16vw] font-bold leading-[0.9] tracking-tightest md:text-[9vw]">
           <span className="block overflow-hidden">
             <span data-hero-reveal className="block">
-              {site.name.split(" ")[0]}
+              <Scramble text={firstName} delay={2000} revealSpeed={0.05} />
             </span>
           </span>
-          <span className="block overflow-hidden">
-            <span data-hero-reveal className="block text-white/40">
-              {site.name.split(" ").slice(1).join(" ") || "Portfolio"}
+          {lastName && (
+            <span className="block overflow-hidden">
+              <span data-hero-reveal className="block text-white/40">
+                <Scramble text={lastName} delay={2150} revealSpeed={0.05} />
+              </span>
             </span>
-          </span>
+          )}
         </h1>
 
         <div className="mt-10 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">

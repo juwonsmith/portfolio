@@ -37,6 +37,34 @@ export default function Projects() {
       return () => tween.kill();
     });
 
+    // Mobile: no hover + no horizontal scroll, so make the vertical scroll feel
+    // alive — stagger each card in and fade its live preview in as it arrives.
+    mm.add("(max-width: 767px)", () => {
+      const ctx = gsap.context(() => {
+        gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
+          gsap.from(card.querySelectorAll(".reveal-item"), {
+            y: 60,
+            opacity: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            stagger: 0.12,
+            scrollTrigger: { trigger: card, start: "top 82%" },
+          });
+          const img = card.querySelector<HTMLElement>(".preview-img");
+          if (img) {
+            // toggle opacity via the class's CSS transition (smooth, no conflict)
+            ScrollTrigger.create({
+              trigger: card,
+              start: "top 62%",
+              onEnter: () => (img.style.opacity = "1"),
+              onLeaveBack: () => (img.style.opacity = "0"),
+            });
+          }
+        });
+      }, sec);
+      return () => ctx.revert();
+    });
+
     return () => mm.revert();
   }, []);
 
@@ -67,11 +95,11 @@ export default function Projects() {
           return (
           <article
             key={p.id}
-            className="group flex w-full shrink-0 items-center px-6 py-16 md:min-w-[66vw] md:px-16 md:py-0 lg:min-w-[54vw]"
+            className="project-card group flex w-full shrink-0 items-center px-6 py-16 md:min-w-[66vw] md:px-16 md:py-0 lg:min-w-[54vw]"
           >
             <div className="grid w-full items-center gap-8 md:grid-cols-2 md:gap-12">
               {/* art */}
-              <Tilt>
+              <Tilt className="reveal-item">
                 <div
                   data-view
                   className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10"
@@ -94,7 +122,7 @@ export default function Projects() {
                         // if the screenshot can't be captured, keep the gradient
                         e.currentTarget.style.display = "none";
                       }}
-                      className="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                      className="preview-img absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-700 group-hover:opacity-100"
                     />
                   )}
                   <div className="pointer-events-none absolute inset-0 flex items-end p-6">
@@ -106,7 +134,7 @@ export default function Projects() {
               </Tilt>
 
               {/* copy */}
-              <div>
+              <div className="reveal-item">
                 <div className="mb-4 flex items-center gap-3 text-sm text-white/40">
                   <span className="h-px w-8 bg-white/20" />
                   <span>{p.blurb}</span>
