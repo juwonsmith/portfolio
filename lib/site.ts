@@ -85,6 +85,33 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "token-scanner",
+    title: "Solana Token Safety Scanner",
+    year: "2025",
+    blurb: "On-chain risk analysis dApp",
+    description:
+      "Paste any Solana token address for an instant on-chain safety report — flags active mint/freeze authorities and top-holder concentration, then returns a risk verdict. Read-only mainnet analysis, no wallet required.",
+    tags: ["Solana", "web3.js", "Next.js", "TypeScript"],
+    gradient: ["#14f195", "#9945ff"],
+    links: [
+      { label: "Live", href: "https://solana-token-scanner-seven.vercel.app" },
+      { label: "GitHub", href: "https://github.com/juwonsmith/solana-token-scanner" },
+    ],
+  },
+  {
+    id: "ticketing",
+    // TODO: replace with the real product/event name
+    title: "Live Ticketing Platform",
+    year: "2025",
+    blurb: "High-concurrency event ticketing",
+    description:
+      "Led development of a real-time ticketing platform that served 500+ concurrent live users. Engineered race-condition-safe seat/inventory locking and queue-based load handling so checkouts stayed consistent under heavy traffic spikes.",
+    // TODO: confirm the actual stack you used
+    tags: ["Node.js", "Real-time", "PostgreSQL", "Redis"],
+    gradient: ["#f59e0b", "#ef4444"],
+    links: [{ label: "Case study", href: "#" }],
+  },
+  {
     id: "void-noir",
     title: "Void Noir Store",
     year: "2024",
